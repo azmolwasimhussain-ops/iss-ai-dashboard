@@ -1,0 +1,190 @@
+/* ALL @import MUST BE FIRST - PostCSS requirement */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ===================== CSS VARIABLES ===================== */
+:root {
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-card: rgba(255,255,255,0.05);
+  --border-color: rgba(255,255,255,0.08);
+  --text-primary: #f0f0ff;
+  --text-secondary: #a0a0c0;
+  --accent: #6c63ff;
+  --accent2: #ff6b9d;
+  --accent3: #00d2ff;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+.light {
+  --bg-primary: #f0f2ff;
+  --bg-secondary: #e8eaf6;
+  --bg-card: rgba(255,255,255,0.7);
+  --border-color: rgba(0,0,0,0.08);
+  --text-primary: #1a1a2e;
+  --text-secondary: #555577;
+}
+
+/* ===================== RESET ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #8b85ff; }
+
+/* ===================== GLASS ===================== */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+}
+
+.glass-strong {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+}
+
+/* ===================== GRADIENT TEXT ===================== */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-pink {
+  background: linear-gradient(135deg, var(--accent2), #ff9a9e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===================== GRADIENTS ===================== */
+.gradient-bg { background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 100%); }
+.gradient-bg-pink { background: linear-gradient(135deg, var(--accent2) 0%, #ff9a9e 100%); }
+
+/* ===================== LEAFLET ===================== */
+.leaflet-container { background: var(--bg-secondary) !important; border-radius: 12px; }
+.leaflet-tile { filter: brightness(0.85) saturate(0.9); }
+.light .leaflet-tile { filter: none; }
+
+/* ===================== ANIMATIONS ===================== */
+@keyframes issMarkerPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+.iss-marker-pulse { animation: issMarkerPulse 2s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, rgba(108,99,255,0.1) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-8px); opacity: 1; }
+}
+.typing-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  animation: typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes statPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108,99,255,0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(108,99,255,0); }
+}
+.stat-pulse { animation: statPulse 3s ease-in-out infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; }
+
+/* ===================== BUTTONS ===================== */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #8b85ff);
+  color: white; border: none; border-radius: 10px;
+  padding: 10px 20px; font-weight: 600; cursor: pointer;
+  transition: all 0.3s ease; font-family: 'Inter', sans-serif;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(108,99,255,0.4); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: var(--bg-card); color: var(--text-primary);
+  border: 1px solid var(--border-color); border-radius: 10px;
+  padding: 10px 20px; font-weight: 500; cursor: pointer;
+  transition: all 0.3s ease; font-family: 'Inter', sans-serif;
+  backdrop-filter: blur(10px);
+}
+.btn-secondary:hover { background: rgba(108,99,255,0.1); border-color: var(--accent); }
+
+/* ===================== INPUTS ===================== */
+.input-glass {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: 10px; padding: 10px 16px; color: var(--text-primary);
+  font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+.input-glass:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
+.input-glass::placeholder { color: var(--text-secondary); }
+
+/* ===================== LAYOUT ===================== */
+.card-hover { transition: all 0.3s ease; }
+.card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+.hover-glow:hover { box-shadow: 0 0 20px rgba(108,99,255,0.3); }
+.transition-all-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.sidebar { background: var(--bg-secondary); border-right: 1px solid var(--border-color); }
+.nav-active { background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(0,210,255,0.1)); border-left: 3px solid var(--accent); }
+
+.gradient-border { position: relative; border: none !important; }
+.gradient-border::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+}
+
+/* ===================== CHATBOT ===================== */
+.chatbot-window {
+  position: fixed; bottom: 90px; right: 24px;
+  width: 380px; max-height: 600px; z-index: 1000;
+  border-radius: 20px; overflow: hidden;
+}
+@media (max-width: 480px) {
+  .chatbot-window { width: calc(100vw - 32px); right: 16px; bottom: 80px; }
+}
+
+/* ===================== MISC ===================== */
+.map-container { height: 400px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); }
+.news-img { width: 100%; height: 180px; object-fit: cover; border-radius: 12px 12px 0 0; }
+.glow-purple { text-shadow: 0 0 20px rgba(108,99,255,0.5); }
+.glow-cyan { text-shadow: 0 0 20px rgba(0,210,255,0.5); }
