@@ -8,4 +8,8 @@ export function ISSProvider({ children }) {
   return <ISSContext.Provider value={issData}>{children}</ISSContext.Provider>;
 }
 
-export const useISS = () => useContext(ISSContext);
+// eslint-disable-next-line react-refresh/only-export-components
+export function useISS() {
+  return useContext(ISSContext);
+}
+

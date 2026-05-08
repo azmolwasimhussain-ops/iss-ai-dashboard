@@ -8,4 +8,7 @@ export function NewsProvider({ children }) {
   return <NewsContext.Provider value={newsData}>{children}</NewsContext.Provider>;
 }
 
-export const useNewsContext = () => useContext(NewsContext);
+// eslint-disable-next-line react-refresh/only-export-components
+export function useNewsContext() {
+  return useContext(NewsContext);
+}

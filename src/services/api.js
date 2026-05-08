@@ -239,25 +239,100 @@ function buildSampleNews() {
   };
 }
 
-/* ─── AI (Qwen3-1.7B via HF Router) ─────────────────────────────────────── */
+/* ─── AI (Mistral-7B via HF Inference API) ──────────────────────────────── */
 
+const HF_MODEL_URL =
+  'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2';
+
+/**
+ * Build a Mistral-7B [INST] prompt from a messages array.
+ * Mistral uses:  [INST] system + user [/INST]  assistant  [INST] user [/INST]
+ */
+function buildMistralPrompt(messages) {
+  let prompt = '';
+  for (let i = 0; i < messages.length; i++) {
+    const m = messages[i];
+    if (m.role === 'system') {
+      // Prepend system content to the first user message
+      continue;
+    }
+    if (m.role === 'user') {
+      // Find preceding system message if any
+      const sys = i === 1 && messages[0]?.role === 'system' ? messages[0].content + '\n\n' : '';
+      prompt += `[INST] ${sys}${m.content} [/INST]`;
+    } else if (m.role === 'assistant') {
+      prompt += ` ${m.content} `;
+    }
+  }
+  return prompt.trim();
+}
+
+/**
+ * Calls HF Inference API with Mistral-7B-Instruct-v0.2
+ * Uses native fetch for better CORS compatibility in browsers
+ */
 export async function queryAI(messages) {
   const token = import.meta.env.VITE_AI_TOKEN;
-  const res = await axios.post(
-    'https://router.huggingface.co/v1/chat/completions',
-    {
-      model: 'Qwen/Qwen3-1.7B:featherless-ai',
-      messages,
-      max_tokens: 300,
-      temperature: 0.7,
-    },
-    {
+  if (!token) throw new Error('AI_TOKEN_MISSING');
+
+  const prompt = buildMistralPrompt(messages);
+
+  let res;
+  try {
+    res = await fetch(HF_MODEL_URL, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      timeout: 30000,
-    }
-  );
-  return res.data;
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          max_new_tokens: 300,
+          temperature: 0.7,
+          return_full_text: false,
+          do_sample: true,
+        },
+      }),
+      signal: AbortSignal.timeout(60000),
+    });
+  } catch (netErr) {
+    throw new Error(`NETWORK: ${netErr.message}`);
+  }
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    const msg = String(data?.error || res.status);
+    if (msg.toLowerCase().includes('loading')) throw new Error('MODEL_LOADING');
+    throw new Error(`HF_ERROR: ${msg}`);
+  }
+
+  if (data?.error) {
+    const msg = String(data.error);
+    if (msg.toLowerCase().includes('loading')) throw new Error('MODEL_LOADING');
+    throw new Error(`HF_ERROR: ${msg}`);
+  }
+
+  return data;
 }
+
+/**
+ * Extracts clean reply text from Mistral HF Inference API response.
+ * Response format: [{ generated_text: "..." }]
+ */
+export function extractAIReply(data) {
+  // Array format from HF Inference API
+  if (Array.isArray(data) && data.length > 0) {
+    return (data[0]?.generated_text ?? '').trim() || null;
+  }
+  // Chat completions format (fallback)
+  if (data?.choices?.length > 0) {
+    let text = data.choices[0]?.message?.content ?? '';
+    text = text.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+    return text || null;
+  }
+  return null;
+}
+
+
